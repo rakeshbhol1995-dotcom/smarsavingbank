@@ -1,0 +1,13 @@
+  // --- MINIMAL DEBUG ---
+  return (
+    <div style={{ padding: 50, background: 'darkred', color: 'white', fontSize: 24, textAlign: 'center' }}>
+       <h1>SYSTEM CRASH DIAGNOSIS</h1>
+       <p>If you see this red screen, the basic App shell is working.</p>
+       <br/>
+       <p>Account: {account || 'No Account'}</p>
+       <button onClick={() => window.location.reload()} style={{ padding: 10, marginTop: 20, cursor: 'pointer' }}>Reload</button>
+    </div>
+  );
+}
+
+export default App;

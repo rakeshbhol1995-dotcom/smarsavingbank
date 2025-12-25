@@ -1,0 +1,35 @@
+  // --- SAFE MODE DEBUGGING ---
+  console.log("Rendering Safe Mode UI");
+  return (
+    <div className="min-h-screen bg-slate-900 text-white p-10 flex flex-col items-center justify-center">
+      <h1 className="text-4xl font-bold text-green-500 mb-4">System Check: Safe Mode Active</h1>
+      <p className="mb-4 text-xl">If you can see this, React is working perfectly.</p>
+      
+      <div className="bg-slate-800 p-6 rounded-xl border border-white/10 w-full max-w-lg shadow-2xl">
+         <h2 className="text-xl font-bold mb-4 border-b border-white/10 pb-2">State Diagnostics</h2>
+         <div className="grid grid-cols-2 gap-4 text-sm font-mono">
+           <p className="text-slate-400">Account Data:</p>
+           <p className="text-green-400">{account ? "Connected" : "Disconnected"}</p>
+           
+           <p className="text-slate-400">Current Block:</p>
+           <p className="text-blue-400">{currentBlock || "Fetching..."}</p>
+           
+           <p className="text-slate-400">Live Feed:</p>
+           <p className="text-yellow-400">{winners ? winners.length : "0"} items</p>
+         </div>
+         <p className="mt-4 text-xs text-slate-500 text-center">
+            Mode: Safe Debug • ErrorBoundary: Removed
+         </p>
+      </div>
+
+      <div className="mt-8 flex gap-4">
+        <button 
+          onClick={() => { window.location.reload() }}
+          className="px-6 py-3 bg-blue-600 rounded-lg font-bold hover:bg-blue-500 transition-all cursor-pointer"
+        >
+          Reload App
+        </button>
+      </div>
+    </div>
+  );
+}

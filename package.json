@@ -1,0 +1,48 @@
+{
+  "name": "smart-saving-bank",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^1.5.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "@web3auth/base": "^9.4.0",
+    "@web3auth/ethereum-provider": "^9.4.0",
+    "@web3auth/metamask-adapter": "^9.4.0",
+    "@web3auth/modal": "^9.4.0",
+    "buffer": "^6.0.3",
+    "clsx": "^2.1.1",
+    "ethers": "^6.16.0",
+    "events": "^3.3.0",
+    "framer-motion": "^12.23.26",
+    "lucide-react": "^0.562.0",
+    "ox": "^0.8.0",
+    "permissionless": "^0.3.2",
+    "process": "^0.11.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.4.0",
+    "viem": "^2.43.3",
+    "vite-plugin-node-polyfills": "^0.24.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "vite": "^7.2.4"
+  }
+}

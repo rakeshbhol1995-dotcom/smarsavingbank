@@ -1,0 +1,14 @@
+{
+    "name": "smart-saving-bank-bot",
+    "version": "1.0.0",
+    "description": "Telegram Bot for Smart Saving Bank",
+    "main": "bot.js",
+    "scripts": {
+        "start": "node bot.js"
+    },
+    "dependencies": {
+        "node-telegram-bot-api": "^0.61.0",
+        "ethers": "^6.11.1",
+        "dotenv": "^16.4.5"
+    }
+}

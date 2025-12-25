@@ -1,0 +1,86 @@
+  // --- RESTORED HOME VIEW ---
+  return (
+    <div className="relative min-h-screen bg-[#020617] text-slate-200 selection:bg-financial-green/30 overflow-hidden">
+      {/* --- Background Effects --- */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/20 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-blue-900/10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[60%] bg-financial-green/5 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150" />
+      </div>
+
+      {/* Content Wrapper */}
+      <div className="relative z-10 transition-colors duration-300">
+
+        <Navbar
+          scrollToSection={() => { }}
+          account={account}
+          onLogout={handleLogout}
+          onBuyCrypto={() => setIsDepositModalOpen(true)}
+          onConnect={() => connectWallet('metamask')}
+        />
+
+        <LiveFeedSection winners={winners} />
+
+        <HeroSection protocolTVL={protocolTVL} dailyPool={dailyPool} weeklyPool={weeklyPool} />
+
+        <DashboardSection
+          walletBalance={walletBalance}
+          passes={passes}
+          dailyPool={dailyPool}
+          weeklyPool={weeklyPool}
+          grantPool={grantPool}
+          aaveApy={aaveApy}
+          adminSeedAmount={adminSeedAmount}
+          protocolTVL={protocolTVL}
+          onAdminDeposit={handleAdminDeposit}
+          onAdminWithdraw={handleAdminWithdraw}
+          hasAppliedForGrant={hasAppliedForGrant}
+          onApplyGrant={handleApplyGrant}
+          winners={winners}
+          onAddFunds={() => setIsDepositModalOpen(true)}
+          isOwner={account && contractOwner && account.toLowerCase() === contractOwner.toLowerCase()}
+        />
+
+        <PassStoreSection
+          walletBalance={walletBalance}
+          onBuyPass={handleBuyPassV2}
+        />
+
+        <StrategySection />
+
+        <InventorySection
+          passes={passes}
+          onSellPass={handleSellPass}
+          onSellBatch={handleSellBatch}
+        />
+
+        <YieldStructureSection />
+
+        <ImpactSection
+          grantPool={grantPool}
+          hasAppliedForGrant={hasAppliedForGrant}
+          onApplyGrant={handleApplyGrant}
+          onDownloadReport={handleDownloadGrantReport}
+        />
+
+        <TransparencySection
+          onExportStats={handleExportUserStats}
+          onExportGlobal={handleExportGlobalLedger}
+          onOpenLegal={(doc) => setActiveLegalDoc(doc)}
+          winners={winners}
+          currentBlock={currentBlock}
+        />
+
+        <AdminSettingsModal isOpen={isAdminSettingsOpen} onClose={() => setIsAdminSettingsOpen(false)} config={adminConfig} onSave={handleSaveAdminConfig} />
+        <DepositModal isOpen={isDepositModalOpen} onClose={() => setIsDepositModalOpen(false)} userAddress={account} config={adminConfig} onDeposit={handleDeposit} usdtContract={usdtContract} />
+        <WithdrawModal isOpen={isWithdrawModalOpen} onClose={() => setIsWithdrawModalOpen(false)} onWithdraw={handleWithdraw} balance={walletBalance} />
+        <WalletSelectionModal isOpen={isWalletSelectionOpen} onClose={() => setIsWalletSelectionOpen(false)} />
+
+        <LegalDocs activeDoc={activeLegalDoc} onClose={() => setActiveLegalDoc(null)} />
+      </div>
+    </div>
+  );
+}
+
+export default App;
