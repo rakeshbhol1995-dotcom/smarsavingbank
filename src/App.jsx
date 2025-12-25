@@ -10,6 +10,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { ethers } from 'ethers';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
 
 // Polyfill check - handled by vite-plugin-node-polyfills
 // if (typeof window !== 'undefined') {
@@ -1807,97 +1808,89 @@ export default function App() {
   // }, []);
 
   const connectWallet = async () => {
-    setIsLoggingIn(true); // Start Loading
+    setIsLoggingIn(true);
     console.log("Attempting connection...");
-    // Debug Alert 1
-    // alert("Debug: Starting Connection...");
+
+    const onConnectSuccess = async (provider, address) => {
+      const signer = await provider.getSigner();
+      const bankContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      const usdt = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer);
+
+      setAccount(address);
+      setProvider(provider);
+      setContract(bankContract);
+      setUsdtContract(usdt);
+      setIsAuthenticated(true);
+      setIsLoggingIn(false);
+    };
 
     if (window.ethereum) {
       try {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-
         // V36: Optimized Connection & Network Check
         try {
           const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-          // console.log("Chain ID:", chainId);
-
           if (chainId !== '0x89') {
-            // alert("Debug: Switching Network...");
             await window.ethereum.request({
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: '0x89' }],
             });
           }
         } catch (switchError) {
-          // This error code indicates that the chain has not been added to MetaMask.
           if (switchError.code === 4902) {
             try {
               await window.ethereum.request({
                 method: 'wallet_addEthereumChain',
-                params: [
-                  {
-                    chainId: '0x89',
-                    chainName: 'Polygon Mainnet',
-                    rpcUrls: ['https://polygon-rpc.com/'],
-                    nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-                    blockExplorerUrls: ['https://polygonscan.com/'],
-                  },
-                ],
+                params: [{
+                  chainId: '0x89',
+                  chainName: 'Polygon Mainnet',
+                  rpcUrls: ['https://polygon-rpc.com/'],
+                  nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+                  blockExplorerUrls: ['https://polygonscan.com/'],
+                }],
               });
-            } catch (addError) {
-              console.error("Add network error", addError);
-              alert("Debug Error: Could not add Polygon.");
-              return;
-            }
-          } else {
-            console.error("Switch network error", switchError);
-            alert("Debug Error: Switch failed. Please switch manually.");
-            // Proceed anyway
+            } catch (e) { console.error(e); }
           }
         }
 
-        // alert("Debug: Getting Signer...");
-        // Re-init provider after switch
         const newProvider = new ethers.BrowserProvider(window.ethereum);
         const signer = await newProvider.getSigner();
         const address = await signer.getAddress();
+        await onConnectSuccess(newProvider, address);
 
-        // alert("Debug: Address Found: " + address);
-
-        const bankContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-        const usdt = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer);
-
-        setAccount(address);
-        setProvider(newProvider);
-        setContract(bankContract);
-        setUsdtContract(usdt);
-        setIsAuthenticated(true);
-        setUsdtContract(usdt);
-        setIsAuthenticated(true);
-        // fetchData(bankContract, address); // Removed: UseEffect handles this safely
       } catch (err) {
         console.error("MetaMask Connect Failed:", err);
-
-        // Handle Pending Request Error (MetaMask code -32002)
-        if (err.code === -32002 || JSON.stringify(err).includes("-32002")) {
-          alert("Action Required: A connection request is already waiting in your wallet. Please open the MetaMask extension to approve it.");
-        } else {
-          alert("Connection Error: " + (err.reason || err.message || "Unknown error occurred"));
-        }
-      } finally {
-        setIsLoggingIn(false); // Stop Loading
+        alert("Connection Error: " + (err.reason || err.message));
+        setIsLoggingIn(false);
       }
     } else {
-      // Check for Mobile
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        // Open Multi-Wallet Selection Modal
-        setIsWalletSelectionOpen(true);
+      // WalletConnect Fallback (Mobile)
+      try {
+        const wcProvider = await EthereumProvider.init({
+          projectId: '833e728e9381c00657989508544e3b78', // Free Demo ID. Replace with your own from cloud.walletconnect.com
+          chains: [137], // Polygon
+          showQrModal: true,
+          methods: ['eth_sendTransaction', 'eth_personalSign'],
+          events: ['chainChanged', 'accountsChanged'],
+          metadata: {
+            name: 'Smart Saving Bank',
+            description: 'No-Loss DeFi Savings',
+            url: 'https://smartsavingbank.com',
+            icons: ['https://avatars.githubusercontent.com/u/37784886']
+          }
+        });
+
+        await wcProvider.connect();
+
+        const provider = new ethers.BrowserProvider(wcProvider);
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+        await onConnectSuccess(provider, address);
+
+      } catch (err) {
+        console.error("WalletConnect Error:", err);
+        alert("Mobile Connection Failed. Please try again.");
         setIsLoggingIn(false);
-        return;
       }
-      alert("No Wallet Found! Please install MetaMask.");
-      setIsLoggingIn(false);
     }
   };
 
