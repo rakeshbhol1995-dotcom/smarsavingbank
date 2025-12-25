@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     nodePolyfills(),
   ],
+  base: './',
   define: {
     global: 'window',
   },
